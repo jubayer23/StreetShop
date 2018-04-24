@@ -6,11 +6,14 @@ public class GlobalAppAccess {
 
 
     public static final String APP_NAME = "StreetShop";
-    public static String BaseUrl = "http://198.204.244.250:8084/";
+    public static final String SECRET_TOKEN = "h7ZgdUgTAAmIDURV4sXUlwQ6QxFNrCME";
+    public static String BaseUrl = "https://www.streetshops.mobi/api/rest/";
     //public static String BaseUrl = "https://b5e99a4d.ngrok.io/bgb/";
-    public static final String URL_GET_TIMES =  BaseUrl + "getTimes.jsp";
-    public static final String URL_INSERT_TIME = BaseUrl +  "insertTime.jsp";
-    public static final String URL_DELETE_TIME = BaseUrl +  "deleteTime.jsp";
+    public static final String URL_GET_SESSION =  BaseUrl + "session";
+    public static final String URL_LOGIN = BaseUrl +  "login";
+    public static final String URL_REGISTER = BaseUrl +  "register";
+    public static final String URL_RETRIVE_PASSWORD = BaseUrl +  "deleteTime.jsp";
+    public static final String URL_LOGOUT = BaseUrl +  "logout";
 
 
     public static final  int SUCCESS = 1;
@@ -41,5 +44,11 @@ public class GlobalAppAccess {
     public static final String[] rideshares_options = {"Uber", "Lyft", "Uber or Lyft"};
 
     public static final String[] seats_options = {"4 Seats", "5 Seats"};
+
+
+    public static final String KEY_ERROR = "error";
+    public static final String ERROR_TYPE_SUCCESS = "success";
+    public static final String ERROR_TYPE_SERVER_PROBLEM = "server_problem";
+    public static final String ERROR_TYPE_NETWORK_PROBLEM = "network_problem";
 
 }

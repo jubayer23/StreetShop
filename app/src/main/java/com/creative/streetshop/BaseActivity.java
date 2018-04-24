@@ -142,4 +142,14 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public boolean isProgressDialogShowing(){
+        if(progressDialog == null) return false;
+        if (progressDialog.isShowing()) {
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
 }
