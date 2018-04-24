@@ -18,9 +18,8 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        if(!MydApplication.getInstance().getPrefManger().getSession().isEmpty()){
-            Log.d("DEBUG",MydApplication.getInstance().getPrefManger().getSession());
-            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+        if(MydApplication.getInstance().getPrefManger().getUserData() != null){
+            Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
             startActivity(intent);
             finish();
             return;
@@ -36,7 +35,6 @@ public class SplashActivity extends AppCompatActivity {
                         !session.equals(GlobalAppAccess.ERROR_TYPE_SERVER_PROBLEM)){
                     MydApplication.getInstance().getPrefManger().setSession(session);
                 }
-                Log.d("DEBUG",session);
                 Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();

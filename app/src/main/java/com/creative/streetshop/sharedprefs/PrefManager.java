@@ -78,7 +78,7 @@ public class PrefManager {
         editor.commit();
     }
 
-    public void setUpdateChecker(String obj) {
+    public void setUserData(String obj) {
         editor = pref.edit();
 
         editor.putString(KEY_USER_DATA, obj);
@@ -87,7 +87,7 @@ public class PrefManager {
         editor.commit();
     }
 
-    public UserData getUpdateChecker() {
+    public UserData getUserData() {
 
         String gson = pref.getString(KEY_USER_DATA, "");
         if (gson.isEmpty()) return null;

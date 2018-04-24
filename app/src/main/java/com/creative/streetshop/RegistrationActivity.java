@@ -128,7 +128,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
 
                         dismissProgressDialog();
 
-                        /*LoginRegistration loginRegistration = MydApplication.gson.fromJson(response,LoginRegistration.class);
+                        LoginRegistration loginRegistration = MydApplication.gson.fromJson(response,LoginRegistration.class);
 
                         if(loginRegistration.getSuccess() == 1 ){
 
@@ -145,7 +145,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
                             Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
                             startActivity(intent);
 
-                        }*/
+                        }
 
 
                     }
@@ -189,9 +189,9 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
                 if (response != null) {
                     responseString = String.valueOf(response.statusCode);
                     // can get more details such as response.headers
-                    Log.d("DEBUG_pnetwork",String.valueOf(response));
                 }
-                return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                return super.parseNetworkResponse(response);
+                //return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
             }
         };
 
@@ -269,6 +269,11 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         }
         if (ed_password.getText().toString().isEmpty()) {
             ed_password.setError("Required");
+            isFormValid = false;
+        }
+
+        if (!ed_password.getText().toString().isEmpty() && ed_password.getText().toString().length() < 6) {
+            ed_password.setError("Password too short!");
             isFormValid = false;
         }
         if (ed_confirm_password.getText().toString().isEmpty()) {
