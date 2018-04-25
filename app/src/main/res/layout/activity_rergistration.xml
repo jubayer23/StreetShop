@@ -32,7 +32,7 @@
                 android:layout_height="60dp"
                 android:background="@drawable/ed_square_white_background"
                 android:textColor="@color/black"
-                android:textColorHint="@color/gray"
+                android:textColorHint="@color/gray_lightest"
                 android:hint="Full name"
                 android:gravity="center"/>
 
@@ -43,7 +43,7 @@
                 android:layout_height="60dp"
                 android:background="@drawable/ed_square_white_background"
                 android:textColor="@color/black"
-                android:textColorHint="@color/gray"
+                android:textColorHint="@color/gray_lightest"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
                 android:gravity="center"/>
@@ -55,7 +55,7 @@
                 android:layout_height="60dp"
                 android:background="@drawable/ed_square_white_background"
                 android:textColor="@color/black"
-                android:textColorHint="@color/gray"
+                android:textColorHint="@color/gray_lightest"
                 android:hint="Residential address"
                 android:inputType="text"
                 android:gravity="center"/>
@@ -67,7 +67,7 @@
                 android:layout_height="60dp"
                 android:background="@drawable/ed_square_white_background"
                 android:textColor="@color/black"
-                android:textColorHint="@color/gray"
+                android:textColorHint="@color/gray_lightest"
                 android:hint="Contact number"
                 android:inputType="numberDecimal"
                 android:gravity="center"/>
@@ -86,7 +86,7 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/ed_square_white_background"
                     android:textColor="@color/black"
-                    android:textColorHint="@color/gray"
+                    android:textColorHint="@color/gray_lightest"
                     android:hint="Country"
                     android:inputType="text"
                     android:gravity="center"/>
@@ -94,7 +94,7 @@
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@color/gray"/>
+                    android:background="@color/gray_lightest"/>
 
                 <EditText
                     android:id="@+id/ed_city"
@@ -104,7 +104,7 @@
                     android:layout_height="60dp"
                     android:background="@drawable/ed_square_white_background"
                     android:textColor="@color/black"
-                    android:textColorHint="@color/gray"
+                    android:textColorHint="@color/gray_lightest"
                     android:hint="City"
                     android:inputType="text"
                     android:gravity="center"/>
@@ -123,7 +123,7 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/ed_square_white_background"
                     android:textColor="@color/black"
-                    android:textColorHint="@color/gray"
+                    android:textColorHint="@color/gray_lightest"
                     android:hint="Password"
                     android:inputType="textPassword"
                     android:gravity="center"/>
@@ -131,7 +131,7 @@
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@color/gray"/>
+                    android:background="@color/gray_lightest"/>
 
                 <EditText
                     android:id="@+id/ed_confirm_password"
@@ -141,7 +141,7 @@
                     android:layout_height="60dp"
                     android:background="@drawable/ed_square_white_background"
                     android:textColor="@color/black"
-                    android:textColorHint="@color/gray"
+                    android:textColorHint="@color/gray_lightest"
                     android:hint="Confirm Password"
                     android:inputType="textPassword"
                     android:gravity="center"/>

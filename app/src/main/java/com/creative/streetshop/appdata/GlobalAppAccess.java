@@ -12,7 +12,7 @@ public class GlobalAppAccess {
     public static final String URL_GET_SESSION =  BaseUrl + "session";
     public static final String URL_LOGIN = BaseUrl +  "login";
     public static final String URL_REGISTER = BaseUrl +  "register";
-    public static final String URL_RETRIVE_PASSWORD = BaseUrl +  "deleteTime.jsp";
+    public static final String URL_RETRIVE_PASSWORD = BaseUrl +  "forgotten";
     public static final String URL_LOGOUT = BaseUrl +  "logout";
 
 

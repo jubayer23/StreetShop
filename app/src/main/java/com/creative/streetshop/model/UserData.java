@@ -240,7 +240,7 @@ public class UserData {
     }
 
 
-    public class AccountCustomField {
+    public static class AccountCustomField {
 
         @SerializedName("residential_address")
         @Expose

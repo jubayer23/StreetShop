@@ -36,6 +36,8 @@ public class HomeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        initToolbar();
     }
 
 
@@ -51,7 +53,7 @@ public class HomeActivity extends BaseActivity {
 
             case R.id.action_logout:
                 if (DeviceInfoUtils.isConnectingToInternet(this)) {
-
+                    sendRequestToLogout(GlobalAppAccess.URL_LOGOUT);
                 } else {
                     AlertDialogForAnything.showAlertDialogWhenComplte(this, "Alert", "Need internet connection in order to logout", false);
                 }
@@ -63,7 +65,7 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    public void sendRequestTpLogout(String url) {
+    public void sendRequestToLogout(String url) {
 
         // TODO Auto-generated method stub
         if (!isProgressDialogShowing())

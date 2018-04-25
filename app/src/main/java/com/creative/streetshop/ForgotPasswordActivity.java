@@ -1,14 +1,12 @@
 package com.creative.streetshop;
 
 import android.content.Intent;
-import android.media.Image;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -24,6 +22,7 @@ import com.creative.streetshop.alertbanner.AlertDialogForAnything;
 import com.creative.streetshop.appdata.GlobalAppAccess;
 import com.creative.streetshop.appdata.MydApplication;
 import com.creative.streetshop.helperClass.SessionManager;
+import com.creative.streetshop.model.CommonResponse;
 import com.creative.streetshop.model.LoginRegistration;
 import com.creative.streetshop.model.UserData;
 
@@ -34,74 +33,46 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener{
+public class ForgotPasswordActivity extends BaseActivity implements View.OnClickListener {
 
-    private ImageView btn_create_account, btn_login;
-
-    private EditText ed_email, ed_password;
-
-    private TextView tv_forgot_password;
+    private EditText ed_email;
+    private ImageView btn_forgot_password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_forgot_password);
 
         init();
     }
 
-    private void init() {
-
-
+    private void init(){
         ed_email = findViewById(R.id.ed_email);
-        ed_password = findViewById(R.id.ed_password);
-
-
-        btn_create_account = (ImageView) findViewById(R.id.btn_create_account);
-        btn_create_account.setOnClickListener(this);
-
-        btn_login = (ImageView) findViewById(R.id.btn_login);
-        btn_login.setOnClickListener(this);
-
-        tv_forgot_password = findViewById(R.id.tv_forgot_password);
-        tv_forgot_password.setOnClickListener(this);
+        btn_forgot_password = findViewById(R.id.btn_forgot_password);
+        btn_forgot_password.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
+        int id = view.getId();
 
-        int id  = view.getId();
 
-        if(id == R.id.btn_create_account){
-            Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
-
-        if(id == R.id.btn_login){
-
+        if(id == R.id.btn_forgot_password){
             if (!DeviceInfoUtils.isConnectingToInternet(this)) {
                 AlertDialogForAnything.showAlertDialogWhenComplte(this, "Alert!", "No internet connection! Please connect to working internet connection.", false);
             }
 
             if(showWarning()){
                 if (MydApplication.getInstance().getPrefManger().getSession().isEmpty()) {
-                    getSessionFirstThenLogin();
+                    getSessionFirstThenRequestToForgotPassword();
                 } else {
-                    sendRequestToLogin(GlobalAppAccess.URL_LOGIN);
+                    sendRequestToForgotPassword(GlobalAppAccess.URL_RETRIVE_PASSWORD);
                 }
             }
         }
-
-        if(id == R.id.tv_forgot_password){
-            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-            startActivity(intent);
-        }
-
     }
 
-    private void getSessionFirstThenLogin() {
+    private void getSessionFirstThenRequestToForgotPassword() {
         showProgressDialog("please wait..", true, false);
         SessionManager.LocationResult locationResult = new SessionManager.LocationResult() {
 
@@ -111,10 +82,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 if (!session.equals(GlobalAppAccess.ERROR_TYPE_NETWORK_PROBLEM) &&
                         !session.equals(GlobalAppAccess.ERROR_TYPE_SERVER_PROBLEM)) {
                     MydApplication.getInstance().getPrefManger().setSession(session);
-                    sendRequestToLogin(GlobalAppAccess.URL_LOGIN);
+                    sendRequestToForgotPassword(GlobalAppAccess.URL_RETRIVE_PASSWORD);
                 } else {
                     dismissProgressDialog();
-                    AlertDialogForAnything.showAlertDialogWhenComplte(LoginActivity.this, "Error!", "Problem in getting the session!", false);
+                    AlertDialogForAnything.showAlertDialogWhenComplte(ForgotPasswordActivity.this, "Error!", "Problem in getting the session!", false);
                 }
 
             }
@@ -123,9 +94,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         myLocation.getSession(this, locationResult);
     }
 
-
-
-    public void sendRequestToLogin(String url) {
+    public void sendRequestToForgotPassword(String url) {
 
         //url = url + "?" + "email=" + email + "&password=" + password;
         final String jsonBody = getJsonBody();
@@ -144,19 +113,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
                         dismissProgressDialog();
 
-                        LoginRegistration loginRegistration = MydApplication.gson.fromJson(response,LoginRegistration.class);
+                        CommonResponse commonResponse = MydApplication.gson.fromJson(response,CommonResponse.class);
 
-                        if(loginRegistration.getSuccess() == 1 ){
+                        if(commonResponse.getSuccess() == 1 ){
 
-                            UserData userData = loginRegistration.getUserData();
+                            AlertDialogForAnything.showAlertDialogWhenComplte(ForgotPasswordActivity.this,"Success","Password recovery successfull. Please check you email inbox for further instruction", true);
 
-
-
-                            MydApplication.getInstance().getPrefManger().setUserData(userData);
-                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                            startActivity(intent);
-                            finish();
-
+                        }else{
+                            AlertDialogForAnything.showAlertDialogWhenComplte(ForgotPasswordActivity.this,"Success",commonResponse.getError().get(0), true);
                         }
 
 
@@ -218,7 +182,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
         try {
             jsonBody.put("email", ed_email.getText().toString());
-            jsonBody.put("password", ed_password.getText().toString());
             return jsonBody.toString();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -227,7 +190,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
         return "";
     }
-
 
     private boolean showWarning(){
         boolean isFormValid = true;
@@ -240,12 +202,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             ed_email.setError("Invalid email");
             isFormValid = false;
         }
-
-        if (ed_password.getText().toString().isEmpty()) {
-            ed_password.setError("Required");
-            isFormValid = false;
-        }
-
         return isFormValid;
     }
 }

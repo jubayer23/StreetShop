@@ -134,7 +134,7 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
 
                             UserData userData = loginRegistration.getUserData();
 
-                            UserData.AccountCustomField accountCustomField = userData.getAccountCustomField();
+                            UserData.AccountCustomField accountCustomField = new UserData.AccountCustomField();
                             accountCustomField.setCity(userData.getCustomField().getAccount().getCity());
                             accountCustomField.setCountry(userData.getCustomField().getAccount().getCountry());
                             accountCustomField.setResidentialAddress(userData.getCustomField().getAccount().getResidentialAddress());
@@ -290,5 +290,12 @@ public class RegistrationActivity extends BaseActivity implements View.OnClickLi
         return isFormValid;
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
