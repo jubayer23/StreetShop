@@ -11,6 +11,9 @@ import com.creative.streetshop.appdata.GlobalAppAccess;
 import com.creative.streetshop.appdata.MydApplication;
 import com.creative.streetshop.helperClass.SessionManager;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class SplashActivity extends AppCompatActivity {
 
     @Override
@@ -19,10 +22,20 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         if(MydApplication.getInstance().getPrefManger().getUserData() != null){
-            Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
-            startActivity(intent);
-            finish();
-            return;
+
+            new Timer().schedule(
+                    new TimerTask() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                            finish();
+                            return;
+                        }
+                    },
+                    4000
+            );
+
         }
 
         //showProgressDialog("please wait..", true, false);
@@ -35,9 +48,20 @@ public class SplashActivity extends AppCompatActivity {
                         !session.equals(GlobalAppAccess.ERROR_TYPE_SERVER_PROBLEM)){
                     MydApplication.getInstance().getPrefManger().setSession(session);
                 }
-                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+
+
+                new Timer().schedule(
+                        new TimerTask() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                                return;
+                            }
+                        },
+                        2000
+                );
 
             }
         };

@@ -8,6 +8,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.creative.streetshop.sharedprefs.PrefManager;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.google.gson.Gson;
 
 
@@ -37,6 +39,7 @@ public class MydApplication extends Application {
         pref = new PrefManager(this);
 
         gson = new Gson();
+
 
         //deviceImieNumber = DeviceInfoUtils.getDeviceImieNumber(this);
 

@@ -80,20 +80,21 @@
 
                 <EditText
                     android:id="@+id/ed_country"
-                    android:layout_marginTop="8dp"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
                     android:background="@drawable/ed_square_white_background"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/gray_lightest"
+                    android:gravity="center"
                     android:hint="Country"
                     android:inputType="text"
-                    android:gravity="center"/>
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray_lightest" />
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
                     android:background="@color/gray_lightest"/>
 
                 <EditText
@@ -131,6 +132,7 @@
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
                     android:background="@color/gray_lightest"/>
 
                 <EditText
