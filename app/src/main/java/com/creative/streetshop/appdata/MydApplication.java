@@ -2,6 +2,7 @@ package com.creative.streetshop.appdata;
 
 import android.app.Application;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -11,6 +12,10 @@ import com.creative.streetshop.sharedprefs.PrefManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.gson.Gson;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
 
 
 public class MydApplication extends Application {
@@ -42,6 +47,12 @@ public class MydApplication extends Application {
 
 
         //deviceImieNumber = DeviceInfoUtils.getDeviceImieNumber(this);
+        TwitterConfig config = new TwitterConfig.Builder(this)
+                .logger(new DefaultLogger(Log.DEBUG))
+                .twitterAuthConfig(new TwitterAuthConfig(GlobalAppAccess.consumerKey,GlobalAppAccess.consumerKeySecrate))
+                .debug(true)
+                .build();
+        Twitter.initialize(config);
 
     }
 

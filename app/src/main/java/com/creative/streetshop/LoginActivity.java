@@ -1,11 +1,9 @@
 package com.creative.streetshop;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,6 +33,12 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterAuthToken;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +50,10 @@ import java.util.Map;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
-    private ImageView btn_login, btn_fb_login;
+    private static final String LOGIN_TYPE_NORMAL = "normal";
+    private static final String LOGIN_TYPE_FACEBOOK = "facebook";
+    private static final String LOGIN_TYPE_TWITTER = "twitter";
+    private ImageView btn_login, btn_fb_login, btn_twitter_login;
 
     private LinearLayout btn_create_account;
 
@@ -57,20 +64,61 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private CallbackManager mCallbackManager;
 
+    private String social_login_email, social_login__access_token;
+
+    private TwitterLoginButton twitterLoginButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        initFaceBookLogin();
 
+        initTwitterLogin();
+
+        init();
+    }
+
+    private void init() {
+
+
+        ed_email = findViewById(R.id.ed_email);
+        ed_password = findViewById(R.id.ed_password);
+
+
+        btn_create_account = findViewById(R.id.btn_create_account);
+        btn_create_account.setOnClickListener(this);
+
+        btn_login = (ImageView) findViewById(R.id.btn_login);
+        btn_login.setOnClickListener(this);
+
+        tv_forgot_password = findViewById(R.id.tv_forgot_password);
+        tv_forgot_password.setOnClickListener(this);
+
+
+        btn_fb_login = findViewById(R.id.btn_fb_login);
+        btn_fb_login.setOnClickListener(this);
+
+        btn_twitter_login = findViewById(R.id.btn_twitter_login);
+        btn_twitter_login.setOnClickListener(this);
+
+        twitterLoginButton = (TwitterLoginButton) findViewById(R.id.twitterLoginButton);
+    }
+
+    private void initFaceBookLogin() {
         mCallbackManager = CallbackManager.Factory.create();
 
         LoginManager.getInstance().registerCallback(mCallbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        Log.d("DEBUG", "Login");
-                        Log.d("DEBUG", loginResult.getAccessToken().getToken());
+                        // Log.d("DEBUG", "Login");
+                        // Log.d("DEBUG", loginResult.getAccessToken().getToken());
+                        social_login__access_token = "";
+                        social_login_email = "";
+                        showProgressDialog("Please wait...", true, false);
+                        social_login__access_token = loginResult.getAccessToken().getToken();
 
 
                         GraphRequest request = GraphRequest.newMeRequest(
@@ -87,12 +135,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                             String email = jsonObject.getString("email");
                                             if (email != null && !email.isEmpty()) {
 
-                                                Log.d("DEBUG_email", email);
+                                                //Log.d("DEBUG_email", email);
+                                                social_login_email = email;
+
+                                                if (MydApplication.getInstance().getPrefManger().getSession().isEmpty()) {
+                                                    getSessionFirstThenLogin(LOGIN_TYPE_FACEBOOK);
+                                                } else {
+                                                    sendRequestToLogin(GlobalAppAccess.URL_SOCIAL_LOGIN, LOGIN_TYPE_FACEBOOK);
+                                                }
 
                                             } else {
-                                               dismissProgressDialog();
+                                                dismissProgressDialog();
                                                 AlertDialogForAnything.showAlertDialogWithoutTitle(LoginActivity.this,
-                                                        "Facebook registration is not available. Please sign up for a LifeData account using your email address or add an email in your Facebook Settings and try again.", false);
+                                                        "Facebook registration is not available. Please sign up for a Steetshop account using your email address or add an email in your Facebook Settings and try again.", false);
                                             }
 
                                         } catch (JSONException e) {
@@ -123,31 +178,72 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         Toast.makeText(LoginActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
-
-
-        init();
     }
 
-    private void init() {
+    //////****fro Twitter///////////
+    private void initTwitterLogin() {
+        // TODO Auto-generated method stub
+        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+
+                showProgressDialog("Please wait...", true, false);
+
+                social_login__access_token = "";
+                social_login_email = "";
+
+                // Do something with result, which provides a TwitterSession for making API calls
+                TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
+                TwitterAuthToken authToken = session.getAuthToken();
+                final String token = authToken.token;
+                final String secret = authToken.secret;
+
+                //twitterUserName = session.getUserName();
+
+                TwitterCore.getInstance().getApiClient().getAccountService().verifyCredentials(false, false, true).enqueue(new Callback<com.twitter.sdk.android.core.models.User>() {
+                    @Override
+                    public void success(Result<com.twitter.sdk.android.core.models.User> userResult) {
+                        //String name = userResult.data.name;
+                        social_login__access_token = token;
+                        social_login_email = userResult.data.email;
+
+                        if (social_login_email != null && !social_login_email.isEmpty()) {
+                            if (MydApplication.getInstance().getPrefManger().getSession().isEmpty()) {
+                                getSessionFirstThenLogin(LOGIN_TYPE_TWITTER);
+                            } else {
+                                sendRequestToLogin(GlobalAppAccess.URL_SOCIAL_LOGIN, LOGIN_TYPE_TWITTER);
+                            }
+                        }else {
+                            dismissProgressDialog();
+                            AlertDialogForAnything.showAlertDialogWithoutTitle(LoginActivity.this,
+                                    "Twitter registration is not available. Please sign up for a Steetshop account using your email address or add an email in your Facebook Settings and try again.", false);
+                        }
 
 
-        ed_email = findViewById(R.id.ed_email);
-        ed_password = findViewById(R.id.ed_password);
 
 
-        btn_create_account = findViewById(R.id.btn_create_account);
-        btn_create_account.setOnClickListener(this);
+                    }
 
-        btn_login = (ImageView) findViewById(R.id.btn_login);
-        btn_login.setOnClickListener(this);
+                    @Override
+                    public void failure(com.twitter.sdk.android.core.TwitterException exc) {
+                        // Log.d("TwitterKit", "Verify Credentials Failure", exc);
+                        //Toast.makeText(UserRegistrationActivity.this,"Login authentication failed!",Toast.LENGTH_LONG).show();
+                        dismissProgressDialog();
+                        AlertDialogForAnything.showAlertDialogWhenComplte(LoginActivity.this, "Error", "Login authentication failed!", false);
+                    }
+                });
 
-        tv_forgot_password = findViewById(R.id.tv_forgot_password);
-        tv_forgot_password.setOnClickListener(this);
+            }
 
-
-        btn_fb_login = findViewById(R.id.btn_fb_login);
-        btn_fb_login.setOnClickListener(this);
+            @Override
+            public void failure(com.twitter.sdk.android.core.TwitterException exception) {
+                // Do something on failure
+                //  Toast.makeText(UserRegistrationActivity.this,"Login authentication failed!",Toast.LENGTH_LONG).show();
+                AlertDialogForAnything.showAlertDialogWhenComplte(LoginActivity.this, "Error", "Login authentication failed!", false);
+            }
+        });
     }
+
 
     @Override
     public void onClick(View view) {
@@ -161,17 +257,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             return;
         }
 
+        if (id == R.id.tv_forgot_password) {
+            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
+        }
+
+        if (!DeviceInfoUtils.isConnectingToInternet(this)) {
+            AlertDialogForAnything.showAlertDialogWhenComplte(this, "Alert!", "No internet connection! Please connect to working internet connection.", false);
+            return;
+        }
+
+
         if (id == R.id.btn_login) {
 
-            if (!DeviceInfoUtils.isConnectingToInternet(this)) {
-                AlertDialogForAnything.showAlertDialogWhenComplte(this, "Alert!", "No internet connection! Please connect to working internet connection.", false);
-            }
 
             if (showWarning()) {
                 if (MydApplication.getInstance().getPrefManger().getSession().isEmpty()) {
-                    getSessionFirstThenLogin();
+                    getSessionFirstThenLogin(LOGIN_TYPE_NORMAL);
                 } else {
-                    sendRequestToLogin(GlobalAppAccess.URL_LOGIN);
+                    sendRequestToLogin(GlobalAppAccess.URL_LOGIN_NORMAL, LOGIN_TYPE_NORMAL);
                 }
             }
         }
@@ -180,15 +284,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile", "user_friends"));
         }
 
-        if (id == R.id.tv_forgot_password) {
-            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-            startActivity(intent);
+        if (id == R.id.btn_twitter_login) {
+            //new TokenGet().execute();
+            twitterLoginButton.performClick();
         }
+
 
     }
 
-    private void getSessionFirstThenLogin() {
-        showProgressDialog("please wait..", true, false);
+    private void getSessionFirstThenLogin(final String login_type) {
+        if (!isProgressDialogShowing())
+            showProgressDialog("please wait..", true, false);
         SessionManager.LocationResult locationResult = new SessionManager.LocationResult() {
 
             @Override
@@ -197,7 +303,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 if (!session.equals(GlobalAppAccess.ERROR_TYPE_NETWORK_PROBLEM) &&
                         !session.equals(GlobalAppAccess.ERROR_TYPE_SERVER_PROBLEM)) {
                     MydApplication.getInstance().getPrefManger().setSession(session);
-                    sendRequestToLogin(GlobalAppAccess.URL_LOGIN);
+                    if (login_type.equals(LOGIN_TYPE_NORMAL)) {
+                        sendRequestToLogin(GlobalAppAccess.URL_LOGIN_NORMAL, login_type);
+                    } else {
+                        sendRequestToLogin(GlobalAppAccess.URL_SOCIAL_LOGIN, login_type);
+                    }
+
                 } else {
                     dismissProgressDialog();
                     AlertDialogForAnything.showAlertDialogWhenComplte(LoginActivity.this, "Error!", "Problem in getting the session!", false);
@@ -210,10 +321,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-    public void sendRequestToLogin(String url) {
+    public void sendRequestToLogin(String url, String login_type) {
 
         //url = url + "?" + "email=" + email + "&password=" + password;
-        final String jsonBody = getJsonBody();
+        final String jsonBody = getJsonBody(login_type);
         if (jsonBody.isEmpty()) return;
         Log.d("DEBUG", jsonBody);
         // TODO Auto-generated method stub
@@ -298,12 +409,28 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         MydApplication.getInstance().addToRequestQueue(req);
     }
 
-    private String getJsonBody() {
+    private String getJsonBody(String login_type) {
         JSONObject jsonBody = new JSONObject();
 
         try {
-            jsonBody.put("email", ed_email.getText().toString());
-            jsonBody.put("password", ed_password.getText().toString());
+
+            switch (login_type) {
+                case LOGIN_TYPE_FACEBOOK:
+                    jsonBody.put("email", social_login_email);
+                    jsonBody.put("access_token", social_login__access_token);
+                    jsonBody.put("provider", "facebook");
+                    break;
+                case LOGIN_TYPE_NORMAL:
+                    jsonBody.put("email", ed_email.getText().toString());
+                    jsonBody.put("password", ed_password.getText().toString());
+                    break;
+                case LOGIN_TYPE_TWITTER:
+                    jsonBody.put("email", social_login_email);
+                    jsonBody.put("access_token", social_login__access_token);
+                    jsonBody.put("provider", "twitter");
+                    break;
+            }
+
             return jsonBody.toString();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -315,7 +442,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+
+        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+
+        // mTwitterAuthClient.onActivityResult(requestCode, responseCode, intent);
+        if (mCallbackManager != null && mCallbackManager.onActivityResult(requestCode, resultCode, data)) {
+            return;
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 

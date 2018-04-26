@@ -10,7 +10,8 @@ public class GlobalAppAccess {
     public static String BaseUrl = "https://www.streetshops.mobi/api/rest/";
     //public static String BaseUrl = "https://b5e99a4d.ngrok.io/bgb/";
     public static final String URL_GET_SESSION =  BaseUrl + "session";
-    public static final String URL_LOGIN = BaseUrl +  "login";
+    public static final String URL_LOGIN_NORMAL = BaseUrl +  "login";
+    public static final String URL_SOCIAL_LOGIN = BaseUrl +  "sociallogin";
     public static final String URL_REGISTER = BaseUrl +  "register";
     public static final String URL_RETRIVE_PASSWORD = BaseUrl +  "forgotten";
     public static final String URL_LOGOUT = BaseUrl +  "logout";
@@ -51,4 +52,6 @@ public class GlobalAppAccess {
     public static final String ERROR_TYPE_SERVER_PROBLEM = "server_problem";
     public static final String ERROR_TYPE_NETWORK_PROBLEM = "network_problem";
 
+    public static  final  String consumerKey = "xi1FwgFSyQ9Oi076pGerW1fFP";
+    public static final  String consumerKeySecrate = "DGxzXAgQVyPQptBi1E4pHReIbpuMx6e3EvqK5LIWFilYlOHPeY";
 }

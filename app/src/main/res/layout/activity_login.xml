@@ -8,6 +8,12 @@
     android:background="@drawable/background"
     tools:context="com.creative.streetshop.LoginActivity">
 
+    <com.twitter.sdk.android.core.identity.TwitterLoginButton
+        android:id="@+id/twitterLoginButton"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="wrap_content" />
+
 
     <ImageView
         android:layout_width="match_parent"
@@ -114,6 +120,7 @@
             android:src="@drawable/facebook"/>
 
         <ImageView
+            android:id="@+id/btn_twitter_login"
             android:layout_width="0dp"
             android:layout_marginLeft="5dp"
             android:layout_height="match_parent"
