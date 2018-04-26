@@ -73,11 +73,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
+
+        init();
+
         initFaceBookLogin();
 
         initTwitterLogin();
-
-        init();
     }
 
     private void init() {
